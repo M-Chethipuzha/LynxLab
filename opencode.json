@@ -1,0 +1,63 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "orchestrator",
+  "share": "manual",
+  "autoupdate": true,
+  "instructions": [
+    "AGENTS.md",
+    "docs/LynxLab-DESIGN.md"
+  ],
+  "mcp": {
+    "notion": {
+      "type": "remote",
+      "url": "https://mcp.notion.com/mcp",
+      "enabled": true
+    }
+  },
+  "agent": {
+    "orchestrator": {
+      "description": "Primary daily-driver. Plans the day's small increment, delegates to subagents, runs the git flow, and updates Notion. Use this for the one-shot daily prompt.",
+      "mode": "primary",
+      "temperature": 0.2,
+      "permission": { "edit": "allow", "bash": "allow" },
+      "tools": { "write": true, "edit": true, "bash": true }
+    },
+    "planner": {
+      "description": "Read-only planning agent. Breaks the roadmap into the next small, shippable increment without writing code. Invoke before building when scope is unclear.",
+      "mode": "primary",
+      "temperature": 0.3,
+      "permission": { "edit": "deny", "bash": "deny" },
+      "tools": { "write": false, "edit": false, "bash": false }
+    },
+    "core-engineer": {
+      "description": "C/C++ specialist for the daemon, control plane, inference runtime, wire codec, and SIMD kernels. Owns CMake. Never writes Python or frontend code.",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "tools": { "write": true, "edit": true, "bash": true }
+    },
+    "ai-engineer": {
+      "description": "Python specialist for model quantization/conversion, the adaptive scheduler, and the policy compiler. Never touches the C/C++ hot path or the frontend.",
+      "mode": "subagent",
+      "temperature": 0.2,
+      "tools": { "write": true, "edit": true, "bash": true }
+    },
+    "frontend-engineer": {
+      "description": "TypeScript/React specialist for the dashboard, topology graph, and live event stream. Frontend only; no backend logic.",
+      "mode": "subagent",
+      "temperature": 0.3,
+      "tools": { "write": true, "edit": true, "bash": true }
+    },
+    "reviewer": {
+      "description": "Read-only code reviewer. Checks the language-pool discipline, SemVer correctness, scope creep against the roadmap, and that the increment is genuinely small. Makes no changes.",
+      "mode": "subagent",
+      "temperature": 0.2,
+      "tools": { "write": false, "edit": false, "bash": false }
+    },
+    "scribe": {
+      "description": "Updates Notion (sprint board, tasks, tags), writes the CHANGELOG entry, and crafts conventional-commit messages and the PR body. Uses the notion MCP. No source-code edits.",
+      "mode": "subagent",
+      "temperature": 0.4,
+      "tools": { "write": true, "edit": true, "bash": true }
+    }
+  }
+}
