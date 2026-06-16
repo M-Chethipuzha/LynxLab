@@ -7,6 +7,15 @@
     "AGENTS.md",
     "docs/LynxLab-DESIGN.md"
   ],
+  "model": "opencode/nemotron-3-ultra-free",
+  "provider": {
+    "opencode": {
+      "options": {
+        "timeout": 1200000,
+        "chunkTimeout": 900000
+      }
+    }
+  },
   "mcp": {
     "notion": {
       "type": "remote",

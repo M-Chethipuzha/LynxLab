@@ -9,3 +9,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial project structure and documentation
+- Codec library: wire-protocol frame struct with encode/decode, CRC32 checksum, and C unit tests
