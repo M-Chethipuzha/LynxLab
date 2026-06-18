@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.20)
 
+find_package(Threads REQUIRED)
+
+# Daemon unit tests
+add_executable(test_daemon test_daemon.cpp
+    ${CMAKE_SOURCE_DIR}/src/daemon/lynx_daemon.cpp)
+target_link_libraries(test_daemon PRIVATE lynx-codec)
+target_include_directories(test_daemon PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/codec
+    ${CMAKE_SOURCE_DIR}/src/agent
+    ${CMAKE_SOURCE_DIR}/src/daemon
+)
+target_link_libraries(test_daemon PRIVATE Threads::Threads)
+add_test(NAME test_daemon COMMAND test_daemon)
+
 # Codec unit tests
 add_executable(test_codec test_codec.c)
 target_link_libraries(test_codec PRIVATE lynx-codec)

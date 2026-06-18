@@ -37,7 +37,7 @@ enable_testing()
 # Include subdirectories
 add_subdirectory(src/codec)
 add_subdirectory(src/agent)
-# add_subdirectory(src/daemon)  # TODO: add when daemon is implemented
+add_subdirectory(src/daemon)
 add_subdirectory(tests)
 
 # Installation
