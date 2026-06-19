@@ -11,8 +11,11 @@
 #define LYNX_DAEMON_BUF_SIZE (1024 * 1024)
 #define LYNX_DAEMON_MAX_CONNS 16
 
+class LynxStorage;
+
 typedef struct {
     int port;
+    LynxStorage *storage;
 } lynx_daemon_config_t;
 
 typedef struct {

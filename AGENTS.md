@@ -52,6 +52,10 @@ The active model fails or times out on large responses. Keep every turn small an
 - Every commit uses Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`, `build:`).
 - Daily: branch from `dev`, build the increment, commit, open + merge PR into `dev`. At sprint end, merge `dev` → `main`, tag, release.
 
+## MCP setup
+- **Notion MCP**: configured in `opencode.json` (remote URL). Token comes from editor/IDE-level tool config.
+- **GitHub MCP**: provided by the editor/IDE (e.g. VS Code GitHub auth). The token needs **repo** scope (full control of private repositories) for PR creation and merge operations. If PR creation fails with 403, the token lacks the right scopes — set `GITHUB_TOKEN` env var with a classic PAT (repo scope) and run `gh auth login` once.
+
 ## Definition of done (per increment)
 1. Builds via CMake / pyproject / Vite as applicable.
 2. Has a test or a documented runnable demo.

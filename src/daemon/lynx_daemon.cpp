@@ -1,5 +1,6 @@
 #include "lynx_daemon.h"
 #include "lynx_agent.h"
+#include "lynx_storage.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -32,7 +33,7 @@ void lynx_daemon_shutdown(void) {
     g_running = 0;
 }
 
-static int process_connection(lynx_connection_t *conn, lynx_frame_callback_t callback) {
+static int process_connection(lynx_connection_t *conn, const lynx_daemon_config_t *config, lynx_frame_callback_t callback) {
     uint8_t tmp[65536];
     ssize_t n = read(conn->fd, tmp, sizeof(tmp));
     if (n <= 0) {
@@ -87,6 +88,13 @@ static int process_connection(lynx_connection_t *conn, lynx_frame_callback_t cal
                        (unsigned long long)metrics.mem_total_kb,
                        (unsigned long long)metrics.mem_avail_kb,
                        metrics.load_1m, metrics.load_5m, metrics.load_15m);
+
+                if (config && config->storage) {
+                    config->storage->store_metrics(conn->node_id, frame.header.timestamp_ns,
+                                                   metrics.cpu_user, metrics.cpu_system, metrics.cpu_idle,
+                                                   metrics.mem_total_kb, metrics.mem_avail_kb,
+                                                   metrics.load_1m, metrics.load_5m, metrics.load_15m);
+                }
             }
         } else if (frame.header.type != LYNX_FRAME_TYPE_METRICS) {
             printf("[lynxd] unhandled frame type %d\n", frame.header.type);
@@ -224,7 +232,7 @@ int lynx_daemon_run(const lynx_daemon_config_t *config, lynx_frame_callback_t ca
 
         for (int i = 0; i < LYNX_DAEMON_MAX_CONNS; i++) {
             if (connections[i].fd >= 0 && FD_ISSET(connections[i].fd, &readfds)) {
-                if (process_connection(&connections[i], callback) < 0) {
+                if (process_connection(&connections[i], config, callback) < 0) {
                     printf("[lynxd] closing connection on slot %d\n", i);
                     close(connections[i].fd);
                     free(connections[i].buf);
